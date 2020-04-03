@@ -46,11 +46,11 @@ class Community(Enum):
 
 
 class Data(Enum):
-    CASOS = {'path': '../spain/datasets/COVID 19/ccaa_covid19_casos.csv', 'label': 'Casos'}
-    ALTAS = {'path': '../spain/datasets/COVID 19/ccaa_covid19_altas.csv', 'label': 'Altas'}
-    FALLECIDOS = {'path': '../spain/datasets/COVID 19/ccaa_covid19_fallecidos.csv', 'label': 'Fallecidos'}
-    HOSPITALIZADOS = {'path': '../spain/datasets/COVID 19/ccaa_covid19_hospitalizados.csv', 'label': 'Hospitalizados'}
-    UCI = {'path': '../spain/datasets/COVID 19/ccaa_covid19_uci.csv', 'label': 'Hospitalizados en UCIs'}
+    CASOS = {'path': 'datasets/COVID 19/ccaa_covid19_casos.csv', 'label': 'Casos'}
+    ALTAS = {'path': 'datasets/COVID 19/ccaa_covid19_altas.csv', 'label': 'Altas'}
+    FALLECIDOS = {'path': 'datasets/COVID 19/ccaa_covid19_fallecidos.csv', 'label': 'Fallecidos'}
+    HOSPITALIZADOS = {'path': 'datasets/COVID 19/ccaa_covid19_hospitalizados.csv', 'label': 'Hospitalizados'}
+    UCI = {'path': 'datasets/COVID 19/ccaa_covid19_uci.csv', 'label': 'Hospitalizados en UCIs'}
 
     @property
     def path(self):

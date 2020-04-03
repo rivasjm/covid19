@@ -72,7 +72,7 @@ def build_bars(data: Data, file_name, incremental: bool = False):
 
     gs.tight_layout(fig, rect=(0, 0, 1, 0.965))
     fig.savefig(file_name)
-    print("![{}](/{})".format(file_name, file_name))
+    # print("![{}](/{})".format(file_name, file_name))
 
 
 def build_lines(data: Data, file_name, per_capita: bool = False, incremental: bool = False, overview: bool = False, log: bool = True):
@@ -92,7 +92,7 @@ def build_lines(data: Data, file_name, per_capita: bool = False, incremental: bo
 
     gs.tight_layout(fig, rect=(0, 0, 1, 0.965))
     fig.savefig(file_name)
-    print("![{}](/{})".format(file_name, file_name))
+    # print("![{}](/{})".format(file_name, file_name))
 
 
 plt.style.use('Solarize_Light2')
