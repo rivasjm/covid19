@@ -1,5 +1,5 @@
 from enum import Enum
-
+import urllib.request
 
 class Community(Enum):
     ESPANA = {'key': 'Total', 'population': 47026208, 'label': 'España'}
@@ -46,19 +46,22 @@ class Community(Enum):
 
 
 class Data(Enum):
-    CASOS = ('datasets/COVID 19/ccaa_covid19_casos.csv', 'Casos')
-    ALTAS = ('datasets/COVID 19/ccaa_covid19_altas.csv', 'Altas')
-    FALLECIDOS = ('datasets/COVID 19/ccaa_covid19_fallecidos.csv', 'Fallecidos')
-    HOSPITALIZADOS = ('datasets/COVID 19/ccaa_covid19_hospitalizados.csv', 'Hospitalizados')
-    UCI = ('datasets/COVID 19/ccaa_covid19_uci.csv', 'Hospitalizados en UCIs')
+    CASOS = ('https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_casos.csv', 'Casos')  #('datasets/COVID 19/ccaa_covid19_casos.csv', 'Casos')
+    ALTAS = ('https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_altas.csv', 'Altas')
+    FALLECIDOS = ('https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_fallecidos.csv', 'Fallecidos')
+    HOSPITALIZADOS = ('https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_hospitalizados.csv', 'Hospitalizados')
+    UCI = ('https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_uci.csv', 'Hospitalizados en UCIs')
 
-    def __init__(self, path, label):
+    def __init__(self, url, label):
+        pass
         self.label = label
-        raw = [line.split(',') for line in open(path).readlines()]
+        req = urllib.request.urlopen(url).read().decode()
+        raw = [line.split(',') for line in req.split('\n')]
+
         # list of date strings
         self.__dates = [self.__process_date(date) for date in raw[0][2:]]
         # Community.key -> list of integer values
-        self.__data = {line[1]: list(map(int, line[2:])) for line in raw[1:]}
+        self.__data = {line[1]: list(map(int, line[2:])) for line in raw[1:] if len(line) > 1}
 
     @staticmethod
     def __process_date(date: str):
@@ -80,3 +83,23 @@ class Data(Enum):
             values = [(v/community.population)*float(per_capita_factor) for v in values]
 
         return values
+
+
+if __name__ == '__main__':
+    req = urllib.request.urlopen('https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_casos.csv').read().decode()
+    raw = [line.split(',') for line in req.split('\n')]
+
+    print(raw)
+    # print(raw[0][2:])
+
+    # print(raw[1:])
+    for line in raw[1:]:
+        if len(line) > 1:
+            print(line)
+
+    # lines = file.split('\n')
+    # for line in lines:
+    #     print(line)
+    # lines = [line for line in file]
+    # for line in lines:
+    #     print(line.split(','))
