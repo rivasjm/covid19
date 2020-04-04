@@ -83,23 +83,3 @@ class Data(Enum):
             values = [(v/community.population)*float(per_capita_factor) for v in values]
 
         return values
-
-
-if __name__ == '__main__':
-    req = urllib.request.urlopen('https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_casos.csv').read().decode()
-    raw = [line.split(',') for line in req.split('\n')]
-
-    print(raw)
-    # print(raw[0][2:])
-
-    # print(raw[1:])
-    for line in raw[1:]:
-        if len(line) > 1:
-            print(line)
-
-    # lines = file.split('\n')
-    # for line in lines:
-    #     print(line)
-    # lines = [line for line in file]
-    # for line in lines:
-    #     print(line.split(','))
