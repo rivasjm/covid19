@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class Community(Enum):
+    ESPANA = {'key': 'Total', 'population': 47026208, 'label': 'España'}
     ANDALUCIA = {'key': 'Andalucía', 'population': 8414240}
     ARAGON = {'key': 'Aragón', 'population': 1319291}
     ASTURIAS = {'key': 'Asturias', 'population': 1022800}
@@ -21,7 +22,6 @@ class Community(Enum):
     NAVARRA = {'key': 'Navarra', 'population': 654214}
     PAIS_VASCO = {'key': 'País Vasco', 'population': 2207776}
     LA_RIOJA = {'key': 'La Rioja', 'population': 316798}
-    ESPANA = {'key': 'Total', 'population': 47026208, 'label': 'España'}
 
 
     @property
@@ -46,67 +46,37 @@ class Community(Enum):
 
 
 class Data(Enum):
-    CASOS = {'path': 'datasets/COVID 19/ccaa_covid19_casos.csv', 'label': 'Casos'}
-    ALTAS = {'path': 'datasets/COVID 19/ccaa_covid19_altas.csv', 'label': 'Altas'}
-    FALLECIDOS = {'path': 'datasets/COVID 19/ccaa_covid19_fallecidos.csv', 'label': 'Fallecidos'}
-    HOSPITALIZADOS = {'path': 'datasets/COVID 19/ccaa_covid19_hospitalizados.csv', 'label': 'Hospitalizados'}
-    UCI = {'path': 'datasets/COVID 19/ccaa_covid19_uci.csv', 'label': 'Hospitalizados en UCIs'}
+    CASOS = ('datasets/COVID 19/ccaa_covid19_casos.csv', 'Casos')
+    ALTAS = ('datasets/COVID 19/ccaa_covid19_altas.csv', 'Altas')
+    FALLECIDOS = ('datasets/COVID 19/ccaa_covid19_fallecidos.csv', 'Fallecidos')
+    HOSPITALIZADOS = ('datasets/COVID 19/ccaa_covid19_hospitalizados.csv', 'Hospitalizados')
+    UCI = ('datasets/COVID 19/ccaa_covid19_uci.csv', 'Hospitalizados en UCIs')
 
-    @property
-    def path(self):
-        return self.value['path']
-
-    @property
-    def label(self):
-        return self.value['label']
-
-
-class Parser:
-    def __init__(self, source: Data):
-        self.source = source
-        file = source.path
-        raw = [line.split(',') for line in open(file).readlines()]
-        self.dates = [self.__process_date(date) for date in raw[0][2:]]
-        self.data = {line[1]: line[2:] for line in raw[1:]}
-
-    def get(self, community: Community, incremental: bool = False, per_capita: bool = False):
-        if incremental:
-            ret = self.__incremental(community)
-        else:
-            ret = list(map(int, self.data[community.key]))
-
-        if (per_capita) :
-            population = community.population if per_capita else 1
-            return [v/population*100000 for v in ret]
-        else:
-            return ret
-
-    def __incremental(self, community: Community):
-        cumulative = self.get(community)
-        ret = [0]
-        inc = [j-i for i, j in zip(cumulative[:-1], cumulative[1:])]
-        ret.extend(inc)
-        return ret
-
-    @property
-    def communities(self):
-        return Community.communities()
+    def __init__(self, path, label):
+        self.label = label
+        raw = [line.split(',') for line in open(path).readlines()]
+        # list of date strings
+        self.__dates = [self.__process_date(date) for date in raw[0][2:]]
+        # Community.key -> list of integer values
+        self.__data = {line[1]: list(map(int, line[2:])) for line in raw[1:]}
 
     @staticmethod
     def __process_date(date: str):
         month, day = date.rstrip('\n').split('-')[1:]
         return day + '-' + month
 
+    @property
+    def dates(self):
+        return self.__dates
 
-if __name__ == '__main__':
-    parser = Parser(Data.CASOS)
-    # print(parser.communities)
-    # print(parser.total)
-    # print(parser.dates)
-    # print(parser.incremental(Community.ANDALUCIA))
-    # y = parser.get(Community.CEUTA)
+    def values(self, community: Community, incremental=False, per_capita=False, per_capita_factor=100000):
+        values: list = self.__data[community.key][:]
 
-    v = parser.get(Community.CANTABRIA, per_capita=True)
-    print(v)
+        if incremental:
+            values.insert(0, 0)
+            values = [j-i for i, j in zip(values[:-1], values[1:])]
 
+        if per_capita:
+            values = [(v/community.population)*float(per_capita_factor) for v in values]
 
+        return values

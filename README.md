@@ -1,11 +1,10 @@
 # covid19
 
-![charts/casos_hab.png](/charts/casos_hab.png)
-![charts/fallecidos_hab.png](/charts/fallecidos_hab.png)
-![charts/casos.png](/charts/casos.png)
-![charts/fallecidos.png](/charts/fallecidos.png)
-![charts/casos_diario.png](/charts/casos_diario.png)
-![charts/fallecidos_diario.png](/charts/fallecidos_diario.png)
-![charts/uci_diario.png](/charts/uci_diario.png)
-![charts/hospitalizados_diario.png](/charts/hospitalizados_diario.png)
-![charts/altas_diario.png](/charts/altas_diario.png)
+Data from https://github.com/datadista/datasets
+
+![casos.png](casos.png)
+![casos_diarios.png](casos_diarios.png)
+![casos_per_capita.png](casos_per_capita.png)
+![hospital_diarios.png](hospital_diarios.png)
+![fallecidos_diarios.png](fallecidos_diarios.png)
+![uci_diarios.png](uci_diarios.png)
