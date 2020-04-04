@@ -11,11 +11,11 @@ def int_formatter(x, pos):
 
 def grid(data: Data, out_name, rows, cols,
              sizex=20, sizey=15, incremental = False, share_y = False, per_capita=False,
-             bars=False, overview=False, yticks=None, log=False):
+             bars=False, overview=False, yticks=None, log=False, avg_window=1):
 
     fig: plt.Figure = plt.figure(figsize=(sizex, sizey))
     gs = fig.add_gridspec(rows, cols) #, wspace=0.05, hspace=0.1)
-    dates = data.dates
+    dates = data.dates(avg_w=avg_window)
 
     for i, community in enumerate(list(Community)):
         ax: plt.Axes = fig.add_subplot(gs[i])
@@ -27,17 +27,17 @@ def grid(data: Data, out_name, rows, cols,
         # plot background communities
         if overview:
             if bars:
-                background_values = data.values(Community.ESPANA, incremental, per_capita)
+                background_values = data.values(Community.ESPANA, incremental, per_capita, avg_w=avg_window)
                 plot_func(dates, background_values, color='silver')
             else:
                 for c in list(Community):
-                    background_values = data.values(c, incremental, per_capita)
+                    background_values = data.values(c, incremental, per_capita, avg_w=avg_window)
                     plot_func(dates, background_values, color='silver')
                     if i % cols == cols-1:
                         ax.text(len(dates)-1, background_values[-1], c.name,
                                 fontsize=8, color='dimgrey', horizontalalignment='left')
 
-        values = data.values(community, incremental, per_capita)
+        values = data.values(community, incremental, per_capita, avg_w=avg_window)
         plot_func(dates, values, color='darkviolet')
         ax.text(0.05, 0.95, community.name, color='dimgrey', transform=ax.transAxes, va='top', ha='left',
                 fontsize=12, fontweight='bold')
@@ -52,8 +52,8 @@ def grid(data: Data, out_name, rows, cols,
             ax.set_yticklabels([])
             ax.tick_params(axis='y', which='both', length=0)  # hide just the ticks but not the horizontal grid
 
-    title = data.name + (' por 100.000 hab.' if per_capita else '') + (' (diario)' if incremental else '') + \
-            ' (' + dates[0] + '->' + dates[-1] + ')'
+    title = data.label + (' por 100.000 hab.' if per_capita else '') + (' (diario)' if incremental else '') + \
+            ' (' + dates[0] + '->' + dates[-1] + ')' + (' (media 7 dias)' if avg_window > 1 else '')
     fig.suptitle(title, fontsize=20, fontweight='bold')
     fig.tight_layout(h_pad=0.5, w_pad=0.1, rect=(0, 0, 1, 0.96))
     fig.savefig(out_name)
@@ -63,9 +63,9 @@ def grid(data: Data, out_name, rows, cols,
 if __name__ == '__main__':
     plt.style.use('Solarize_Light2')  # ft like style
 
-    grid(Data.CASOS, "casos.png", 7, 3, sizex=12, sizey=17, incremental=False, per_capita=False, overview=True, log=True)
-    grid(Data.CASOS, "casos_diarios.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False)
+    grid(Data.CASOS, "casos_diarios_per_capita.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=True, avg_window=7, overview=True)
+    grid(Data.CASOS, "casos_diarios.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False, avg_window=7)
+    grid(Data.FALLECIDOS, "fallecidos_diarios.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False, avg_window=7)
+    grid(Data.UCI, "uci_diarios.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False, avg_window=7)
     grid(Data.CASOS, "casos_per_capita.png", 7, 3, sizex=12, sizey=17, incremental=False, per_capita=True, overview=True)
-    grid(Data.HOSPITALIZADOS, "hospital_diarios.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False)
-    grid(Data.FALLECIDOS, "fallecidos_diarios.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False)
-    grid(Data.UCI, "uci_diarios.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False)
+    grid(Data.CASOS, "casos.png", 7, 3, sizex=12, sizey=17, incremental=False, per_capita=False, overview=True, log=True)

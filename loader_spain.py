@@ -50,7 +50,7 @@ class Data(Enum):
     ALTAS = ('https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_altas.csv', 'Altas')
     FALLECIDOS = ('https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_fallecidos.csv', 'Fallecidos')
     HOSPITALIZADOS = ('https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_hospitalizados.csv', 'Hospitalizados')
-    UCI = ('https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_uci.csv', 'Hospitalizados en UCIs')
+    UCI = ('https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_uci.csv', 'Ingresos en UCIs')
 
     def __init__(self, url, label):
         pass
@@ -68,11 +68,12 @@ class Data(Enum):
         month, day = date.rstrip('\n').split('-')[1:]
         return day + '-' + month
 
-    @property
-    def dates(self):
+    def dates(self, avg_w=1):
+        if avg_w > 1 and avg_w <= len(self.__dates):
+            return self.__dates[avg_w-1:]
         return self.__dates
 
-    def values(self, community: Community, incremental=False, per_capita=False, per_capita_factor=100000):
+    def values(self, community: Community, incremental=False, per_capita=False, per_capita_factor=100000, avg_w=1):
         values: list = self.__data[community.key][:]
 
         if incremental:
@@ -82,4 +83,35 @@ class Data(Enum):
         if per_capita:
             values = [(v/community.population)*float(per_capita_factor) for v in values]
 
+        if avg_w > 1 and avg_w <= len(values):
+            ret = []
+            i = 0
+            while i+avg_w-1 < len(values):
+                slice = values[i:i+avg_w]
+                ret.append(sum(slice)/len(slice))
+                i += 1
+            values = ret
+
         return values
+
+
+def wavg(values, avg_w):
+    ret = []
+    i = 0
+    while i + avg_w - 1 < len(values):
+        slice = values[i:i + avg_w]
+        ret.append(sum(slice) / len(slice))
+        i += 1
+    return ret
+
+
+def w(values, avg_w):
+    return values[avg_w-1:]
+
+
+if __name__ == '__main__':
+    a = [1, 2, 3, 4, 5, 6, 7]
+
+    print(w(a, 2))
+    print(wavg(a, 2))
+
