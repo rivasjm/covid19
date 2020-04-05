@@ -2,26 +2,26 @@ from enum import Enum
 import urllib.request
 
 class Community(Enum):
-    ESPANA = {'key': 'Total', 'population': 47026208, 'label': 'España'}
-    ANDALUCIA = {'key': 'Andalucía', 'population': 8414240}
-    ARAGON = {'key': 'Aragón', 'population': 1319291}
-    ASTURIAS = {'key': 'Asturias', 'population': 1022800}
-    BALEARES = {'key': 'Baleares', 'population': 1149460}
-    CANARIAS = {'key': 'Canarias', 'population': 2153389}
-    CANTABRIA = {'key': 'Cantabria', 'population': 581078}
-    CASTILLA_LA_MANCHA = {'key': 'Castilla-La Mancha', 'population': 2032863}
-    CASTILLA_Y_LEON = {'key': 'Castilla y León', 'population': 2399548}
-    CATALUNA = {'key': 'Cataluña', 'population': 7675217}
-    CEUTA = {'key': 'Ceuta', 'population': 84777}
-    VALENCIA = {'key': 'C. Valenciana', 'population': 5003769}
-    EXTREMADURA = {'key': 'Extremadura', 'population': 1067710}
-    GALICIA = {'key': 'Galicia', 'population': 2699499}
-    MADRID = {'key': 'Madrid', 'population': 6663394}
-    MELILLA = {'key': 'Melilla', 'population': 86487}
-    MURCIA = {'key': 'Murcia', 'population': 1493898}
-    NAVARRA = {'key': 'Navarra', 'population': 654214}
-    PAIS_VASCO = {'key': 'País Vasco', 'population': 2207776}
-    LA_RIOJA = {'key': 'La Rioja', 'population': 316798}
+    ESPANA = {'key': 'Total', 'population': 47026208, 'label': 'España', 'iso':'ES'}
+    ANDALUCIA = {'key': 'Andalucía', 'population': 8414240, 'iso':'AN'}
+    ARAGON = {'key': 'Aragón', 'population': 1319291, 'iso':'AR'}
+    ASTURIAS = {'key': 'Asturias', 'population': 1022800, 'iso':'AS'}
+    BALEARES = {'key': 'Baleares', 'population': 1149460, 'iso':'IB'}
+    CANARIAS = {'key': 'Canarias', 'population': 2153389, 'iso':'CN'}
+    CANTABRIA = {'key': 'Cantabria', 'population': 581078, 'iso':'CB'}
+    CASTILLA_LA_MANCHA = {'key': 'Castilla-La Mancha', 'population': 2032863, 'iso':'CM'}
+    CASTILLA_Y_LEON = {'key': 'Castilla y León', 'population': 2399548, 'iso':'CL'}
+    CATALUNA = {'key': 'Cataluña', 'population': 7675217, 'iso':'CT'}
+    CEUTA = {'key': 'Ceuta', 'population': 84777, 'iso':'CE'}
+    VALENCIA = {'key': 'C. Valenciana', 'population': 5003769, 'iso':'VC'}
+    EXTREMADURA = {'key': 'Extremadura', 'population': 1067710, 'iso':'EX'}
+    GALICIA = {'key': 'Galicia', 'population': 2699499, 'iso':'GA'}
+    MADRID = {'key': 'Madrid', 'population': 6663394, 'iso':'MD'}
+    MELILLA = {'key': 'Melilla', 'population': 86487, 'iso':'ME'}
+    MURCIA = {'key': 'Murcia', 'population': 1493898, 'iso':'MC'}
+    NAVARRA = {'key': 'Navarra', 'population': 654214, 'iso':'NC'}
+    PAIS_VASCO = {'key': 'País Vasco', 'population': 2207776, 'iso':'PV'}
+    LA_RIOJA = {'key': 'La Rioja', 'population': 316798, 'iso':'RI'}
 
 
     @property
@@ -36,6 +36,10 @@ class Community(Enum):
     def population(self):
         return self.value['population']
 
+    @property
+    def iso(self):
+        return self.value['iso']
+
     @staticmethod
     def communities():
         return [c for c in list(Community) if c != Community.ESPANA]
@@ -43,6 +47,11 @@ class Community(Enum):
     @staticmethod
     def total():
         return Community.ESPANA
+
+    @staticmethod
+    def from_iso(iso):
+        ret = [c for c in list(Community) if c.iso == iso]
+        return ret[0] if len(ret) > 0 else None
 
 
 class Data(Enum):
@@ -93,25 +102,3 @@ class Data(Enum):
             values = ret
 
         return values
-
-
-def wavg(values, avg_w):
-    ret = []
-    i = 0
-    while i + avg_w - 1 < len(values):
-        slice = values[i:i + avg_w]
-        ret.append(sum(slice) / len(slice))
-        i += 1
-    return ret
-
-
-def w(values, avg_w):
-    return values[avg_w-1:]
-
-
-if __name__ == '__main__':
-    a = [1, 2, 3, 4, 5, 6, 7]
-
-    print(w(a, 2))
-    print(wavg(a, 2))
-
