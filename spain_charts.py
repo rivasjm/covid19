@@ -57,7 +57,7 @@ def grid(data: Data, out_name, rows, cols,
 
     fig.suptitle(title, fontsize=20, fontweight='bold')
     fig.tight_layout(h_pad=0.5, w_pad=0.1, rect=(0, 0, 1, 0.96))
-    fig.text(0.9, 0.02, 'https://github.com/rivasjm/covid19', va='bottom', ha='right')
+    fig.text(1, 0, 'https://github.com/rivasjm/covid19', va='bottom', ha='right')
     fig.savefig(out_name)
     print('![{}]({})'.format(out_name, out_name))  # ![charts/casos_hab.png](/charts/casos_hab.png)
 
