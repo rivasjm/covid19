@@ -60,7 +60,7 @@ class Data:
 
 if __name__ == '__main__':
     data = Data()
-    dates, values = data.get(Community.CANTABRIA, Field.CASES)
+    dates, values = data.get(Community.CANTABRIA, Field.ACTIVE)
 
 
 
