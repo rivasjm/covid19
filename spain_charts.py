@@ -10,7 +10,7 @@ def int_formatter(x, pos):
     return "{:d}".format(int(x))
 
 
-def grid(data: Data, out_name, rows, cols,
+def grid(data, out_name, rows, cols,
              sizex=20, sizey=15, incremental = False, share_y = False, per_capita=False,
              bars=False, overview=False, yticks=None, log=False, avg_window=1):
 
@@ -53,7 +53,7 @@ def grid(data: Data, out_name, rows, cols,
             ax.set_yticklabels([])
             ax.tick_params(axis='y', which='both', length=0)  # hide just the ticks but not the horizontal grid
 
-    title = data.label + (' diarios' if incremental else ' acumulados') + (' por 100.000 hab.' if per_capita else '')  + \
+    title = data.label + (' diarios' if incremental else '') + (' por 100.000 hab.' if per_capita else '')  + \
             ' (' + dates[0] + '->' + dates[-1] + ')' + (' (media 7 dias)' if avg_window > 1 else '')
 
     fig.suptitle(title, fontsize=20, fontweight='bold')
@@ -115,18 +115,15 @@ def plot_active_cases(community: Community, ax: plt.Axes):
     fallecidos = np.asarray(pad(Data.FALLECIDOS.values(community), len(casos)))
     altas = np.asarray(pad(Data.ALTAS.values(community), len(casos)))
     activos = casos-(altas+fallecidos)
+
     ax.plot(fechas, activos)
 
     ax.text(len(fechas)-1, activos[-1], ' activos={}'.format(activos[-1]), va='center', ha='left', fontsize='8')
-
     ax.xaxis.set_visible(False)
     ax.set_title('casos activos', fontsize=10)
-
     labels = ax.get_yticklabels()
     plt.setp(labels, fontsize=8)
-
     ax.set_ylim(bottom=0)
-
     ax.spines['right'].set_visible(False)
     ax.spines['top'].set_visible(False)
 
@@ -140,13 +137,16 @@ if __name__ == '__main__':
     overview(Community.ESPANA, 'overview.png')
 
     plt.style.use('Solarize_Light2')  # ft like style
-    grid(Data.CASOS, "casos_diarios_per_capita.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=True, avg_window=7, overview=True)
-    grid(Data.CASOS, "casos_diarios.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False)
+
+    grid(DataActivos(), "activos.png", 7, 3, sizex=12, sizey=17, incremental=False, per_capita=False, overview=False, log=False)
     grid(Data.CASOS, "casos_diarios_media.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False, avg_window=7)
-    grid(Data.FALLECIDOS, "fallecidos_diarios.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False)
+    grid(Data.CASOS, "casos_diarios.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False)
     grid(Data.FALLECIDOS, "fallecidos_diarios_media.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False, avg_window=7)
-    grid(Data.UCI, "uci_diarios.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False, avg_window=7)
+    grid(Data.FALLECIDOS, "fallecidos_diarios.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False)
+    grid(Data.UCI, "uci_diarios_media.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False, avg_window=7)
+    grid(Data.CASOS, "casos_diarios_per_capita_media.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=True, avg_window=7, overview=True)
     grid(Data.CASOS, "casos_per_capita.png", 7, 3, sizex=12, sizey=17, incremental=False, per_capita=True, overview=True)
     grid(Data.CASOS, "casos.png", 7, 3, sizex=12, sizey=17, incremental=False, per_capita=False, overview=True, log=True)
+
 
 

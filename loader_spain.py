@@ -1,5 +1,7 @@
 from enum import Enum
 import urllib.request
+import numpy as np
+
 
 class Community(Enum):
     ESPANA = {'key': 'Total', 'population': 47026208, 'label': 'España', 'iso':'ES'}
@@ -54,6 +56,9 @@ class Community(Enum):
         return ret[0] if len(ret) > 0 else None
 
 
+
+
+
 class Data(Enum):
     CASOS = ('https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_casos.csv', 'Casos')  #('datasets/COVID 19/ccaa_covid19_casos.csv', 'Casos')
     ALTAS = ('https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_altas.csv', 'Altas')
@@ -102,3 +107,26 @@ class Data(Enum):
             values = ret
 
         return values
+
+
+'''
+Class that mimics a Data object, to show Active cases
+'''
+class DataActivos:
+    def dates(self, avg_w=1):
+        return Data.CASOS.dates(avg_w=avg_w)
+
+    def values(self, community: Community, incremental=False, per_capita=False, per_capita_factor=100000, avg_w=1):
+        casos = np.asarray(Data.CASOS.values(community, incremental=incremental, per_capita=per_capita, per_capita_factor=per_capita_factor, avg_w=avg_w))
+        fallecidos = np.asarray(pad(Data.FALLECIDOS.values(community, incremental=incremental, per_capita=per_capita, per_capita_factor=per_capita_factor, avg_w=avg_w), len(casos)))
+        altas = np.asarray(pad(Data.ALTAS.values(community, incremental=incremental, per_capita=per_capita, per_capita_factor=per_capita_factor, avg_w=avg_w), len(casos)))
+        activos = casos - (altas + fallecidos)
+        return list(activos)
+
+    @property
+    def label(self):
+        return 'Casos Activos'
+
+
+def pad(seq, length, padding=0):
+    return [padding]*(max(0, length-len(seq))) + seq
