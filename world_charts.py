@@ -35,7 +35,7 @@ def grid(loader, out_name):
                 va='top', ha='left', fontsize=10, fontweight='normal')
 
     dates = loader.dates
-    fig.suptitle('Active Cases, for {} largest outbreaks ({}->{})'.format(len(countries), dates[0], dates[-1]),
+    fig.suptitle('Active Cases, for {} largest outbreaks (from {} to {})'.format(len(countries), dates[0], dates[-1]),
                  fontsize=14, fontweight='bold')
     fig.tight_layout(h_pad=0.5, w_pad=1, rect=(0, 0.01, 1, 0.965))
     fig.text(1, 0, 'https://github.com/rivasjm/covid19\ndataset:https://github.com/datasets/covid-19', va='bottom', ha='right')
