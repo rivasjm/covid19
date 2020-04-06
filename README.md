@@ -1,6 +1,12 @@
-# covid19
+# covid19 charts
 
-Data from https://github.com/datadista/datasets
+Data for Spain from https://github.com/datadista/datasets
+World data from https://github.com/datasets/covid-19
+
+## World overview
+![world_active.png](world_active.png)
+
+## Spain overview
 
 ![overview.png](overview.png)
 ![activos.png](activos.png)

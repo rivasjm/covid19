@@ -132,7 +132,7 @@ def pad(seq, length, padding=0):
     return [padding]*(max(0, length-len(seq))) + seq
 
 
-if __name__ == '__main__':
+def build():
     # overview for spain
     overview(Community.ESPANA, 'overview.png')
 
