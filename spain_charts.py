@@ -141,7 +141,8 @@ if __name__ == '__main__':
 
     plt.style.use('Solarize_Light2')  # ft like style
     grid(Data.CASOS, "casos_diarios_per_capita.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=True, avg_window=7, overview=True)
-    grid(Data.CASOS, "casos_diarios.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False, avg_window=7)
+    grid(Data.CASOS, "casos_diarios.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False)
+    grid(Data.CASOS, "casos_diarios_media.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False, avg_window=7)
     grid(Data.FALLECIDOS, "fallecidos_diarios.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False, avg_window=7)
     grid(Data.UCI, "uci_diarios.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False, avg_window=7)
     grid(Data.CASOS, "casos_per_capita.png", 7, 3, sizex=12, sizey=17, incremental=False, per_capita=True, overview=True)
