@@ -137,7 +137,6 @@ def build():
     overview(Community.ESPANA, 'overview.png')
 
     plt.style.use('Solarize_Light2')  # ft like style
-
     grid(DataActivos(), "activos.png", 7, 3, sizex=12, sizey=17, incremental=False, per_capita=False, overview=False, log=False)
     grid(Data.CASOS, "casos_diarios_media.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False, avg_window=7)
     grid(Data.CASOS, "casos_diarios.png", 7, 3, sizex=12, sizey=17, incremental=True, per_capita=False)

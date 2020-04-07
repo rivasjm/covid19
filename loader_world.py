@@ -11,11 +11,28 @@ def avg(values):
     return sum(values)/len(values)
 
 
+def w_avg(values, avg_w):
+    if len(values) <= avg_w:
+        return values
+
+    ret = []
+    i = 0
+    while i + avg_w - 1 < len(values):
+        w = values[i:i + avg_w]
+        ret.append(sum(w) / len(w))
+        i += 1
+    return ret
+
+
 class Type(Enum):
-    CONFIRMED = 2
-    RECOVERED = 3
-    DEATHS = 4
-    ACTIVE = 5
+    CONFIRMED = 2, 'Confirmed Cases'
+    RECOVERED = 3, 'Recovered'
+    DEATHS = 4, 'Deaths'
+    ACTIVE = 5, 'Active Cases'
+
+    def __init__(self, index, label):
+        self.index = index
+        self.label = label
 
 
 class Loader:
@@ -54,7 +71,7 @@ class Loader:
         return dates
 
     def get(self, country, type: Type):
-        ret = [(line[0], line[type.value]) for line in self.data if line[1] == country]
+        ret = [(line[0], line[type.index]) for line in self.data if line[1] == country]
         return list(zip(*ret))
 
 
@@ -69,19 +86,11 @@ class Country:
     def __repr__(self):
         return self.name
 
-    def active_slope(self, days=7):
-        m = max(self.active)
-        values = [v/m for v in self.active[len(self.active)-days:]]
-        return avg(to_incr(values))
+    def get(self, type: Type, increment=False, avg_w=1):
+        ret = (self.confirmed, self.recovered, self.deaths, self.active)[type.index-2]
+        ret = to_incr(ret) if increment else ret
+        return w_avg(ret, avg_w) if avg_w>1 else ret
 
     @property
     def outbreak(self):
         return self.confirmed[-1]
-
-
-if __name__ == '__main__':
-    loader = Loader()
-    countries = [Country(name, loader) for name in loader.countries]
-    print(len(countries))
-    countries.sort(key=lambda c: c.active_slope())
-
