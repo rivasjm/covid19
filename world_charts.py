@@ -36,7 +36,7 @@ def grid(loader, type: Type, out_name, increment=False, avg_w=1, linecolor='tab:
     # select 50 bigger outbreak countries
     countries = countries[:40]
 
-    fig: plt.Figure = plt.figure(figsize=(15, 20), facecolor='#EEE8D5')
+    fig: plt.Figure = plt.figure(figsize=(15, 20), facecolor='papayawhip')
     gs = fig.add_gridspec(10, 4)  # , wspace=0.05, hspace=0.1)
 
     for i, country in enumerate(countries):
@@ -45,7 +45,7 @@ def grid(loader, type: Type, out_name, increment=False, avg_w=1, linecolor='tab:
 
         ax: plt.Axes = fig.add_subplot(gs[i])  # axisbg='#E6E6E6'
         ax.xaxis.set_visible(False)
-        ax.set_facecolor('#E6E6E6')
+        ax.set_facecolor('whitesmoke')
         ax.plot(dates, values, color=linecolor, linewidth=2)
 
         # country label
