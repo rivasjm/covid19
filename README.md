@@ -1,6 +1,6 @@
 # covid19 charts
 
-Data for Spain from https://github.com/datadista/datasets
+Data for Spain from https://covid19.isciii.es
 
 World data from https://github.com/datasets/covid-19
 
