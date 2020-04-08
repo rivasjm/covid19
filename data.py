@@ -41,7 +41,7 @@ def iso_to_name(iso):
 class Column(Enum):
     LOCATION = 'Location'
     DATE = 'Date'
-    CONFIRMED = 'Confirmed', True
+    CONFIRMED = 'Cases', True
     HOSPITALIZED = 'Hospitalized', True
     ICU = 'ICU', True
     DEATHS = 'Deaths', True
@@ -92,7 +92,7 @@ class DataSet(Enum):
             df['Location'] = df['Location'].apply(iso_to_name)
             df = add_totals(df)
 
-        df = df.set_index('Location')
+        df = df.set_index('Date')
 
         # create Active Cases column
         df[Column.ACTIVE.label] = df[Column.CONFIRMED.label] - \
@@ -114,19 +114,19 @@ def add_totals(df: pd.DataFrame):
 
 
 def get_outbreak(df, location):
-    return df.loc[location][Column.CONFIRMED.label][-1]
+    return int(df[df[Column.LOCATION.label] == location][Column.CONFIRMED.label].values[-1])
 
 
 def get_active(df, location):
-    return df.loc[location][Column.ACTIVE.label][-1]
+    return int(df[df[Column.LOCATION.label] == location][Column.ACTIVE.label].values[-1])
 
 
 def get_deaths(df, location):
-    return df.loc[location][Column.DEATHS.label][-1]
+    return int(df[df[Column.LOCATION.label] == location][Column.DEATHS.label].values[-1])
 
 
 def get_locations(df):
-    return [loc for loc in df.index.unique()]
+    return [loc for loc in df[Column.LOCATION.label].unique()]
 
 
 def get_ordered_outbreaks(df):
@@ -136,10 +136,11 @@ def get_ordered_outbreaks(df):
 
 
 def get_dates(df):
-    dates = np.sort(df[Column.DATE.label].unique())
-    return dates
+    return df.index.unique()
 
 
 if __name__ == '__main__':
     df = DataSet.ISCIII.load()
-    print(list(df.loc['Spain']['Confirmed']))
+
+    print(get_dates(df))
+    get_deaths(df, Community.ESPANA.label)

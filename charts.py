@@ -5,8 +5,12 @@ import matplotlib.patches as mpl_patches
 import math
 
 
+def time_repr(dt):
+    return pd.to_datetime(str(dt)).strftime('%b %d')
+
 def get_series(df, location, column, increment, average):
-    ret = df.loc[location][column]
+    ret = df[df[Column.LOCATION.label] == location][column]
+
     if increment:
         ret = ret.diff().fillna(0)
 
@@ -31,15 +35,30 @@ def grid(df: pd.DataFrame, locs, type: Column,
         ax.xaxis.set_visible(False)
         ax.set_facecolor('whitesmoke')
 
+        # Annotate maximum
+        max_x = series.idxmax()
+        max_y = series.loc[max_x]
+        ax.plot(max_x, max_y, 'rx', markersize=8)
+        # ax.annotate('peak={}\n{}'.format(int(max_y), time_repr(max_x)),
+        #             xy=(max_x, max_y), xycoords='data',
+        #             xytext=(-50, -0),
+        #             textcoords='offset pixels', ha='right', va='top',
+        #             arrowprops=dict(arrowstyle='->'),
+        #             fontsize='small', fontweight='bold')
+
         # add a text bos with additional information. To automatically place it in the best place, create
         # a fake legend (legends have a loc='best' feature), as in:
         # https://stackoverflow.com/questions/7045729/automatically-position-text-box-in-matplotlib
         # 3 fake handles, one per line in the fake legend
 
-        handles = [mpl_patches.Rectangle((0, 0), 1, 1, fc="white", ec="white", lw=0, alpha=0)] * 3
-        labels = ['active={}'.format(get_active(df, location)), 'confirmed={}'.format(get_outbreak(df, location)),
-                  'deaths={}'.format(get_deaths(df, location))]
-        legend: plt.legend = ax.legend(handles, labels, loc='best', fontsize='small',
+        handles = [mpl_patches.Rectangle((0, 0), 1, 1, fc="white", ec="white", lw=0, alpha=0)] * 1
+        labels = [
+            # 'confirmed={}'.format(get_outbreak(df, location)),
+            # 'active={}'.format(get_active(df, location)),
+            # 'deaths={}'.format(get_deaths(df, location)),
+            'peak={} on {}'.format(int(max_y), time_repr(max_x))
+        ]
+        legend: plt.legend = ax.legend(handles, labels, loc='best', fontsize='10',
                                        title=location, facecolor=ax.get_facecolor(),
                                        handlelength=0, handletextpad=0, frameon=False)
         legend_title: plt.Text = legend.get_title()
@@ -47,9 +66,9 @@ def grid(df: pd.DataFrame, locs, type: Column,
         legend_title.set_fontsize(12)
         legend._legend_box.align = "left"
 
-    dates = [pd.to_datetime(str(dt)).strftime('%d %b') for dt in get_dates(df)]
+    dates = [time_repr(dt) for dt in get_dates(df)]
     fig.suptitle('{} {}, {} (from {} to {})'.format(
-        'Daily' if increment else '', type.label,
+        'Daily new' if increment else '', type.label,
         '({} days average)'.format(average) if average > 1 else '',
         dates[0], dates[-1]), fontsize=14, fontweight='bold')
 
