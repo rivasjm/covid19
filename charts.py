@@ -67,10 +67,13 @@ def grid(df: pd.DataFrame, locs, type: Column,
         legend._legend_box.align = "left"
 
     dates = [time_repr(dt) for dt in get_dates(df)]
-    fig.suptitle('{} {}, {} (from {} to {})'.format(
-        'Daily new' if increment else '', type.label,
-        '({} days average)'.format(average) if average > 1 else '',
-        dates[0], dates[-1]), fontsize=14, fontweight='bold')
+    fig.suptitle('{}{}{}, from {} to {}'.format(
+        'Daily new ' if increment else '',
+        type.label,
+        ', {} days average'.format(average) if average > 1 else '',
+        dates[0],
+        dates[-1]),
+        fontsize=14, fontweight='bold')
 
     fig.tight_layout(h_pad=0.5, w_pad=0.8, rect=(0, 0.01, 1, 0.965))
     fig.text(1, 0, 'https://github.com/rivasjm/covid19 ', va='bottom', ha='right')
@@ -85,6 +88,7 @@ def build_isciii():
     grid(data, locations, Column.ACTIVE, 15, 10, 'spain_active.png', increment=False, average=1)
     grid(data, locations, Column.CONFIRMED, 15, 10, 'spain_daily_confirmed.png', increment=True, average=7)
     grid(data, locations, Column.DEATHS, 15, 10, 'spain_daily_deaths.png', increment=True, average=7)
+    grid(data, locations, Column.ICU, 15, 10, 'spain_icu.png', increment=False, average=0)
 
 
 def build_world():

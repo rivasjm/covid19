@@ -14,3 +14,4 @@ World data from https://github.com/datasets/covid-19
 ![spain_active.png](spain_active.png)
 ![spain_daily_confirmed.png](spain_daily_confirmed.png)
 ![spain_daily_deaths.png](spain_daily_deaths.png)
+![spain_icu.png](spain_icu.png)
