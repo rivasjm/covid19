@@ -2,11 +2,13 @@ import pandas as pd
 from data import Column, DataSet, get_active, get_outbreak, get_deaths, get_dates, get_ordered_outbreaks, Community
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpl_patches
+import matplotlib.ticker as ticker
 import math
 
 
 def time_repr(dt):
     return pd.to_datetime(str(dt)).strftime('%b %d')
+
 
 def get_series(df, location, column, increment, average):
     ret = df[df[Column.LOCATION.label] == location][column]
@@ -81,6 +83,21 @@ def grid(df: pd.DataFrame, locs, type: Column,
     print('![{}]({})'.format(out_name, out_name))
 
 
+def comparison(df: pd.DataFrame, locs, type: Column, threshold,
+               out_name,
+               increment=False, average=1):
+    fig: plt.Figure = plt.figure(facecolor='papayawhip')
+    ax: plt.Axes = fig.subplots()
+    ax.yaxis.set_major_locator(ticker.FixedLocator([100, 1000, 10000, 20000, 30000]))
+    ax.set_yscale('log')
+
+    for i, location in enumerate(locs):
+        series = get_series(df, location, type.label, increment, average)
+        series[series > threshold].reset_index()[type.label].plot(ax=ax)
+
+    fig.savefig(out_name, facecolor=fig.get_facecolor())
+
+
 def build_isciii():
     data = DataSet.ISCIII.load()
     locations = [c.label for c in Community]  # Spain + regions in alphabetical order
@@ -98,6 +115,8 @@ def build_world():
     grid(data, locations, Column.ACTIVE, 15, 20, 'world_active.png', increment=False, average=1)
     grid(data, locations, Column.CONFIRMED, 15, 20, 'world_daily_confirmed.png', increment=True, average=7)
     grid(data, locations, Column.DEATHS, 15, 20, 'world_daily_deaths.png', increment=True, average=7)
+
+    # comparison(data, locations[:10], Column.CONFIRMED, 100, 'test.png', increment=True, average=7)
 
 
 if __name__ == '__main__':
