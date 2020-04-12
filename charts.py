@@ -70,7 +70,7 @@ def grid(df: pd.DataFrame, locs, type: Column,
 
     dates = [time_repr(dt) for dt in get_dates(df)]
     fig.suptitle('{}{}{}, from {} to {}'.format(
-        'Daily new ' if increment else '',
+        'Daily ' if increment else '',
         type.label,
         ', {} days average'.format(average) if average > 1 else '',
         dates[0],
@@ -93,7 +93,9 @@ def comparison(df: pd.DataFrame, locs, type: Column, threshold,
 
     for i, location in enumerate(locs):
         series = get_series(df, location, type.label, increment, average)
-        series[series > threshold].reset_index()[type.label].plot(ax=ax)
+        series = series[series > threshold].reset_index()[type.label]
+        series.plot(ax=ax)
+        print(location, series)
 
     fig.savefig(out_name, facecolor=fig.get_facecolor())
 
@@ -116,7 +118,7 @@ def build_world():
     grid(data, locations, Column.CONFIRMED, 15, 20, 'world_daily_confirmed.png', increment=True, average=7)
     grid(data, locations, Column.DEATHS, 15, 20, 'world_daily_deaths.png', increment=True, average=7)
 
-    # comparison(data, locations[:10], Column.CONFIRMED, 100, 'test.png', increment=True, average=7)
+    # comparison(data, locations[:10], Column.DEATHS, 5, 'test.png', increment=True, average=7)
 
 
 if __name__ == '__main__':
