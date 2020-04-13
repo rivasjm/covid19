@@ -3,6 +3,7 @@ from data import Column, DataSet, get_active, get_outbreak, get_deaths, get_date
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpl_patches
 import matplotlib.ticker as ticker
+import numpy as np
 import math
 
 
@@ -22,7 +23,7 @@ def get_series(df, location, column, increment, average):
     return ret
 
 
-def grid(df: pd.DataFrame, locs, type: Column,
+def grid(df: pd.DataFrame, locs, column: Column,
          width, height, out_name,
          increment=False, average=1):
 
@@ -30,9 +31,9 @@ def grid(df: pd.DataFrame, locs, type: Column,
     gs = fig.add_gridspec(math.ceil(len(locs)/4), 4)  # , wspace=0.05, hspace=0.1)
 
     for i, location in enumerate(locs):
-        series = get_series(df, location, type.label, increment, average)
         ax: plt.Axes = fig.add_subplot(gs[i])
-        ax = series.plot(ax=ax)
+        series: pd.Series = get_series(df, location, column.label, increment, average)
+        series.plot(ax=ax)
 
         ax.xaxis.set_visible(False)
         ax.set_facecolor('whitesmoke')
@@ -41,6 +42,7 @@ def grid(df: pd.DataFrame, locs, type: Column,
         max_x = series.idxmax()
         max_y = series.loc[max_x]
         ax.plot(max_x, max_y, 'rx', markersize=8)
+        ax.set_ylim(bottom=0)
         # ax.annotate('peak={}\n{}'.format(int(max_y), time_repr(max_x)),
         #             xy=(max_x, max_y), xycoords='data',
         #             xytext=(-50, -0),
@@ -48,21 +50,31 @@ def grid(df: pd.DataFrame, locs, type: Column,
         #             arrowprops=dict(arrowstyle='->'),
         #             fontsize='small', fontweight='bold')
 
-        # add a text bos with additional information. To automatically place it in the best place, create
+        # add month markers
+        month = pd.Timestamp(year=series.index.min().year, month=series.index.min().month+1, day=1)
+        while month < series.index.max():
+            ax.axvline(month, ls=':', color='silver', linewidth=1)
+            ax.text(month, -0.01, month.month_name(), va='top', transform=ax.get_xaxis_transform(), color='grey')
+            month = month + pd.DateOffset(months=1)
+
+        # add a text box with additional information. To automatically place it in the best place, create
         # a fake legend (legends have a loc='best' feature), as in:
         # https://stackoverflow.com/questions/7045729/automatically-position-text-box-in-matplotlib
         # 3 fake handles, one per line in the fake legend
 
-        handles = [mpl_patches.Rectangle((0, 0), 1, 1, fc="white", ec="white", lw=0, alpha=0)] * 1
+        handles = [mpl_patches.Rectangle((0, 0), 1, 1, fc="white", ec="white", lw=0, alpha=0)] * 2
         labels = [
             # 'confirmed={}'.format(get_outbreak(df, location)),
             # 'active={}'.format(get_active(df, location)),
             # 'deaths={}'.format(get_deaths(df, location)),
+            'last={} on {}'.format(int(series.iloc[-1]), time_repr(max_x)),
             'peak={} on {}'.format(int(max_y), time_repr(max_x))
+
         ]
-        legend: plt.legend = ax.legend(handles, labels, loc='best', fontsize='10',
+        legend: plt.legend = ax.legend(handles, labels, fontsize='10',
                                        title=location, facecolor=ax.get_facecolor(),
-                                       handlelength=0, handletextpad=0, frameon=False)
+                                       handlelength=0, handletextpad=0, frameon=False,
+                                       loc='upper left' if location != 'China' else 'best')
         legend_title: plt.Text = legend.get_title()
         legend_title.set_fontweight('bold')
         legend_title.set_fontsize(12)
@@ -71,13 +83,13 @@ def grid(df: pd.DataFrame, locs, type: Column,
     dates = [time_repr(dt) for dt in get_dates(df)]
     fig.suptitle('{}{}{}, from {} to {}'.format(
         'Daily ' if increment else '',
-        type.label,
+        column.label,
         ', {} days average'.format(average) if average > 1 else '',
         dates[0],
         dates[-1]),
         fontsize=14, fontweight='bold')
 
-    fig.tight_layout(h_pad=0.5, w_pad=0.8, rect=(0, 0.01, 1, 0.965))
+    fig.tight_layout(h_pad=0.1, w_pad=0.8, rect=(0, 0.01, 1, 0.965))
     fig.text(1, 0, 'https://github.com/rivasjm/covid19 ', va='bottom', ha='right')
     fig.savefig(out_name, facecolor=fig.get_facecolor())
     print('![{}]({})'.format(out_name, out_name))
