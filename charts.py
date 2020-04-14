@@ -107,8 +107,44 @@ def comparison(df: pd.DataFrame, locs, type: Column, threshold,
         series = get_series(df, location, type.label, increment, average)
         series = series[series > threshold].reset_index()[type.label]
         series.plot(ax=ax)
-        print(location, series)
 
+    fig.savefig(out_name, facecolor=fig.get_facecolor())
+
+
+def date_formatter(x, pos):
+    if x.day == 1:
+        return x
+    else:
+        return ''
+
+
+def heatmap(df: pd.DataFrame, locs, type: Column, out_name,
+            increment=False):
+    fig: plt.Figure = plt.figure(facecolor='papayawhip', figsize=(15, 7))
+    ax: plt.Axes = fig.subplots()
+    y_labels = []
+    values = []
+    x_values = None
+
+    for location in locs:
+        series = get_series(df, location, type.label, increment, 1)
+        vals = list(series/series.max())
+        values.append(vals)
+        y_labels.append(location)
+        if x_values == None:
+            x_values = list(series.index)
+
+    values = np.array(values)
+    im = ax.imshow(values, aspect='auto', cmap='OrRd')
+
+    ax.set_yticks(np.arange(len(y_labels)))
+    ax.set_yticklabels(y_labels)
+    # ax.set_xticks(x_values)
+    # ax.set_xticklabels(x_values)
+    # plt.setp(ax.get_xticklabels(), rotation=45, horizontalalignment='right')
+    # ax.xaxis.set_major_formatter(ticker.FuncFormatter(date_formatter))
+
+    fig.tight_layout()
     fig.savefig(out_name, facecolor=fig.get_facecolor())
 
 
@@ -130,7 +166,8 @@ def build_world():
     grid(data, locations, Column.CONFIRMED, 15, 20, 'world_daily_confirmed.png', increment=True, average=7)
     grid(data, locations, Column.DEATHS, 15, 20, 'world_daily_deaths.png', increment=True, average=7)
 
-    # comparison(data, locations[:10], Column.DEATHS, 5, 'test.png', increment=True, average=7)
+    comparison(data, locations[:10], Column.DEATHS, 5, 'test.png', increment=True, average=7)
+    heatmap(data, locations[:20], Column.CONFIRMED, 'heatmap.png', increment=True)
 
 
 if __name__ == '__main__':
