@@ -8,7 +8,6 @@ World data from https://github.com/datasets/covid-19
 ![world_active.png](world_active.png)
 ![world_daily_confirmed.png](world_daily_confirmed.png)
 ![world_daily_deaths.png](world_daily_deaths.png)
-![world_daily_hospitalized.png](world_daily_hospitalized.png)
 
 ## Spain overview
 
