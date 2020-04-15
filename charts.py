@@ -155,7 +155,8 @@ def build_isciii():
     grid(data, locations, Column.ACTIVE, 15, 10, 'spain_active.png', increment=False, average=1)
     grid(data, locations, Column.CONFIRMED, 15, 10, 'spain_daily_confirmed.png', increment=True, average=7)
     grid(data, locations, Column.DEATHS, 15, 10, 'spain_daily_deaths.png', increment=True, average=7)
-    grid(data, locations, Column.ICU, 15, 10, 'spain_icu.png', increment=False, average=0)
+    grid(data, locations, Column.HOSPITALIZED, 15, 10, 'spain_hospitalized.png', increment=False, average=1)
+    grid(data, locations, Column.ICU, 15, 10, 'spain_icu.png', increment=False, average=1)
 
 
 def build_world():
@@ -165,6 +166,7 @@ def build_world():
     grid(data, locations, Column.ACTIVE, 15, 20, 'world_active.png', increment=False, average=1)
     grid(data, locations, Column.CONFIRMED, 15, 20, 'world_daily_confirmed.png', increment=True, average=7)
     grid(data, locations, Column.DEATHS, 15, 20, 'world_daily_deaths.png', increment=True, average=7)
+    grid(data, locations, Column.HOSPITALIZED, 15, 20, 'world_daily_hospitalized.png', increment=False, average=1)
 
     comparison(data, locations[:10], Column.DEATHS, 5, 'test.png', increment=True, average=7)
     heatmap(data, locations[:20], Column.CONFIRMED, 'heatmap.png', increment=True)
