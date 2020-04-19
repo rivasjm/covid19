@@ -75,7 +75,7 @@ class DataSet(Enum):
             df: pd.DataFrame = pd.read_csv(self.url, header=0, names=[c.label for c in self.cols],
                                            parse_dates=['Date'],
                                            date_parser=lambda x: dt.datetime.strptime(x, '%d/%m/%Y'),
-                                           encoding='mac-roman', skipfooter=5, engine='python')
+                                           encoding='mac-roman', skipfooter=6, engine='python')
         elif self == DataSet.WORLD:
             df: pd.DataFrame = pd.read_csv(self.url, header=0, names=[c.label for c in self.cols],
                                            parse_dates=['Date'],
