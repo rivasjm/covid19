@@ -42,6 +42,8 @@ class Column(Enum):
     LOCATION = 'Location'
     DATE = 'Date'
     CONFIRMED = 'Cases', True
+    PCR = 'PCR+', True,
+    TESTAC = 'TestAc+', True
     HOSPITALIZED = 'Hospitalized', True
     ICU = 'ICU', True
     DEATHS = 'Deaths', True
@@ -59,8 +61,8 @@ class Column(Enum):
 
 class DataSet(Enum):
     ISCIII = 'https://covid19.isciii.es/resources/serie_historica_acumulados.csv', \
-            (Column.LOCATION, Column.DATE, Column.CONFIRMED, Column.HOSPITALIZED, Column.ICU,
-             Column.DEATHS, Column.RECOVERED)
+            (Column.LOCATION, Column.DATE, Column.CONFIRMED, Column.PCR, Column.TESTAC,
+             Column.HOSPITALIZED, Column.ICU, Column.DEATHS, Column.RECOVERED)
 
     WORLD = 'https://raw.githubusercontent.com/datasets/covid-19/master/data/countries-aggregated.csv', \
             (Column.DATE, Column.LOCATION, Column.CONFIRMED, Column.RECOVERED, Column.DEATHS)
@@ -140,7 +142,13 @@ def get_dates(df):
 
 
 if __name__ == '__main__':
-    df = DataSet.ISCIII.load()
+    # df = DataSet.ISCIII.load()
+    #
+    # print(get_dates(df))
+    # get_deaths(df, Community.ESPANA.label)
 
-    print(get_dates(df))
-    get_deaths(df, Community.ESPANA.label)
+    # import urllib.request
+    # url = 'https://www.google.com'
+    # r = urllib.request.urlopen(url)
+
+    df = DataSet.ISCIII.load()
