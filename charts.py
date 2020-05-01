@@ -172,7 +172,7 @@ def build_world():
 
 
 if __name__ == '__main__':
-    build_isciii()
+    # build_isciii()
     build_world()
 
 
